@@ -1,4 +1,4 @@
-# atomarchy-nvidia &nbsp; [![bluebuild build badge](https://github.com/d1on/atomarchy-nvidia/actions/workflows/build.yml/badge.svg)](https://github.com/d1on/atomarchy-nvidia/actions/workflows/build.yml)
+# atomarchy-nvidia-open &nbsp; [![bluebuild build badge](https://github.com/d1on/atomarchy-nvidia-open/actions/workflows/build.yml/badge.svg)](https://github.com/d1on/atomarchy-nvidia-open/actions/workflows/build.yml)
 
 See the [BlueBuild docs](https://blue-build.org/how-to/setup/) for quick setup instructions for setting up your own repository based on this template.
 
@@ -6,14 +6,14 @@ After setup, it is recommended you update this README to describe your custom im
 
 ## Installation
 
-> [!WARNING]  
+> [!WARNING]
 > [This is an experimental feature](https://www.fedoraproject.org/wiki/Changes/OstreeNativeContainerStable), try at your own discretion.
 
 To rebase an existing atomic Fedora installation to the latest build:
 
 - First rebase to the unsigned image, to get the proper signing keys and policies installed:
   ```
-  rpm-ostree rebase ostree-unverified-registry:ghcr.io/d1on/atomarchy-nvidia:latest
+  rpm-ostree rebase ostree-unverified-registry:ghcr.io/d1on/atomarchy-nvidia-open:latest
   ```
 - Reboot to complete the rebase:
   ```
@@ -21,7 +21,7 @@ To rebase an existing atomic Fedora installation to the latest build:
   ```
 - Then rebase to the signed image, like so:
   ```
-  rpm-ostree rebase ostree-image-signed:docker://ghcr.io/d1on/atomarchy-nvidia:latest
+  rpm-ostree rebase ostree-image-signed:docker://ghcr.io/d1on/atomarchy-nvidia-open:latest
   ```
 - Reboot again to complete the installation
   ```
@@ -39,5 +39,5 @@ If build on Fedora Atomic, you can generate an offline ISO with the instructions
 These images are signed with [Sigstore](https://www.sigstore.dev/)'s [cosign](https://github.com/sigstore/cosign). You can verify the signature by downloading the `cosign.pub` file from this repo and running the following command:
 
 ```bash
-cosign verify --key cosign.pub ghcr.io/d1on/atomarchy-nvidia
+cosign verify --key cosign.pub ghcr.io/d1on/atomarchy-nvidia-open
 ```
