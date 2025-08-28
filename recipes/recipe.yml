@@ -1,43 +1,101 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
 # image will be published to ghcr.io/<user>/<name>
-name: atomarchy-nvidia
+name: atomarchy-nvidia-open
 # description will be included in the image's metadata
 description: This is my personal OS image.
 
 # the base image to build on top of (FROM) and the version tag to use
-base-image: ghcr.io/ublue-os/silverblue-main
-image-version: 41 # latest is also supported if you want new updates ASAP
+base-image: ghcr.io/wayblueorg/hyprland-nvidia-open:latest
+# image: ghcr.io/d1on/atomarchy-nvidia # latest is also supported if you want new updates ASAP
 
 # module configuration, executed in order
 # you can include multiple instances of the same module
 modules:
-  - type: files
-    files:
-      - source: system
-        destination: / # copies files/system/* (* means everything inside it) into your image's root folder /
-
-  - type: rpm-ostree
+  # Repos & packages with the new DNF module
+  - type: dnf
     repos:
-      - https://copr.fedorainfracloud.org/coprs/atim/starship/repo/fedora-%OS_VERSION%/atim-starship-fedora-%OS_VERSION%.repo
+      copr:
+        - errornointernet/walker # Walker launcher COPR
     install:
-      - micro
-      - starship
-    remove:
-      # example: removing firefox (in favor of the flatpak)
-      # "firefox" is the main package, "firefox-langpacks" is a dependency
-      - firefox
-      - firefox-langpacks # also remove firefox dependency (not required for all packages, this is a special case)
+      # Skip if a COPR has a transient issue during build
+      skip-unavailable: true
+      packages:
+        # Containers / Docker
+        - moby-engine # Docker Engine (Fedora's package)
+        - docker-cli # docker client
+        - docker-compose # Compose v2 (plugin in Fedora 41+)
+        - distrobox
+        # Dev & tooling
+        - git
+        - just
+        - direnv
+        # Python
+        - python3
+        - python3-pip
+        - python3-virtualenv
+        - pipx
+        # Hyprland helpers
+        - hyprpaper
+        - hypridle
+        - hyprlock
+        - waybar
+        - mako
+        - wl-clipboard
+        - grim
+        - slurp
+        # QoL CLI
+        - btop
+        - ripgrep
+        - fd-find
+        - eza
+        - bat
+        - zoxide
+        - jq
+        - unzip
+        # Launcher
+        - walker
 
+  # Install Flatpaks at boot (system scope)
   - type: default-flatpaks
     configurations:
-      - notify: true # Send notification after install/uninstall is finished (true/false)
-        scope: system
-        # If no repo information is specified, Flathub will be used by default
-        install: # system flatpaks we want all users to have and not remove
-          - org.mozilla.firefox
-          - org.gnome.Loupe
-      - scope: user # Also add Flathub user repo, but no user packages
+      - scope: system
+        repo:
+          title: Flathub (system)
+        install:
+          - org.mozilla.firefox # Firefox (Flatpak)
+          - dev.zed.Zed # Zed editor (Flatpak)
+
+  # Enable Docker services
+  - type: systemd
+    system:
+      enabled:
+        - docker.service
+        - docker.socket
+
+  # Fonts used by Omarchy-esque setups
+  - type: fonts
+    fonts:
+      nerd-fonts:
+        - JetBrainsMono
+        - FiraCode
+        - NerdFontsSymbolsOnly
+      google-fonts:
+        - Inter
+
+  # Vendor Omarchy’s configs for new users
+  - type: script
+    snippets:
+      - |
+        #!/usr/bin/env bash
+        set -euo pipefail
+        OMARCHY_TAG="v2.0.1"
+        tmp="$(mktemp -d)"
+        git clone --depth 1 --branch "$OMARCHY_TAG" https://github.com/basecamp/omarchy "$tmp"
+        install -d /etc/skel/.config /usr/share/omarchy/applications
+        # Copy configs so new users inherit Omarchy's look/feel
+        cp -a "$tmp/config/." /etc/skel/.config/
+        cp -a "$tmp/applications/." /usr/share/omarchy/applications/
+        rm -rf "$tmp"
 
   - type: signing # this sets up the proper policy & signing files for signed images to work fully
-
