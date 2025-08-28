@@ -7,7 +7,7 @@ description: This is my personal OS image.
 
 # the base image to build on top of (FROM) and the version tag to use
 base-image: ghcr.io/wayblueorg/hyprland-nvidia-open:latest
-# image: ghcr.io/d1on/atomarchy-nvidia # latest is also supported if you want new updates ASAP
+image-version: latest
 
 # module configuration, executed in order
 # you can include multiple instances of the same module
