@@ -86,16 +86,14 @@ modules:
   # Vendor Omarchy’s configs for new users
   - type: script
     snippets:
-      - |
-        #!/usr/bin/env bash
-        set -euo pipefail
-        OMARCHY_TAG="v2.0.1"
-        tmp="$(mktemp -d)"
-        git clone --depth 1 --branch "$OMARCHY_TAG" https://github.com/basecamp/omarchy "$tmp"
-        install -d /etc/skel/.config /usr/share/omarchy/applications
-        # Copy configs so new users inherit Omarchy's look/feel
-        cp -a "$tmp/config/." /etc/skel/.config/
-        cp -a "$tmp/applications/." /usr/share/omarchy/applications/
+      - >
+        set -euo pipefail;
+        OMARCHY_TAG="v2.0.1";
+        tmp="$(mktemp -d)";
+        git clone --depth 1 --branch "$OMARCHY_TAG" https://github.com/basecamp/omarchy "$tmp";
+        install -d /etc/skel/.config /usr/share/omarchy/applications;
+        cp -a "$tmp/config/." /etc/skel/.config/;
+        cp -a "$tmp/applications/." /usr/share/omarchy/applications/;
         rm -rf "$tmp"
 
   - type: signing # this sets up the proper policy & signing files for signed images to work fully
