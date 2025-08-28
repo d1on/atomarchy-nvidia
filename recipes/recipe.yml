@@ -6,7 +6,7 @@ name: atomarchy-nvidia-open
 description: This is my personal OS image.
 
 # the base image to build on top of (FROM) and the version tag to use
-base-image: ghcr.io/wayblueorg/hyprland-nvidia-open:latest
+base-image: ghcr.io/wayblueorg/hyprland-nvidia-open
 image-version: latest
 
 # module configuration, executed in order
